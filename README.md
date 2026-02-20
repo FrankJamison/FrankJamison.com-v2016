@@ -1,8 +1,10 @@
-# 2016 Frank Jamison — Online Resume (Static Site)
+# FrankJamison.com v2016
 
-This repository is a polished, multi-page resume website built as a static site (HTML/CSS/JavaScript). It emphasizes consistent branding, clean information architecture, and small interactive touches (accordion sections + animated page transitions) while keeping the runtime simple to host anywhere.
+Static multi-page resume website (HTML/CSS/JavaScript). No build step; deploy by serving the files.
 
-## What this demonstrates (recruiter-friendly)
+**Live preview:** https://frankjamison2016.fcjamison.com/
+
+## What this demonstrates
 
 ### Design & UX
 
@@ -54,24 +56,43 @@ This repository is a polished, multi-page resume website built as a static site 
 
 ## Run locally
 
-### Option A: open directly
+This is a static site, so you can preview it a few different ways depending on what you want to validate.
+
+### Option A: open directly (fastest)
 
 Open `index.html` in your browser.
+
+This is usually fine for visual/layout work. If you run into browser restrictions around local files, use Option B.
 
 ### Option B: run a tiny static server (recommended)
 
 Running a local server avoids browser restrictions and ensures relative assets behave consistently.
 
-- Python:
+- Python (from the repo root):
   - `python -m http.server 8080`
 - Node:
-  - `npx serve`
+  - `npx serve .`
 
 Then open the printed URL (typically `http://localhost:8080/`).
 
+Tip: if you want the URL to look more like the VS Code task / production-style hostnames, you can also open `http://frankjamisoncomv2016.localhost:8080/` while the server is running.
+
 ### VS Code shortcut (optional)
 
-There’s a VS Code task named **Open in Browser** (see `.vscode/tasks.json`) that opens `http://2016frankjamison.localhost/` in Chrome. This is useful if you already have a local host entry / vhost set up for that domain.
+There’s a VS Code task named **Open in Browser** (see `.vscode/tasks.json`) that opens `http://frankjamisoncomv2016.localhost/` in Chrome.
+
+Notes:
+
+- The task URL does **not** include a port, so it assumes something is serving the site on port 80 for that hostname (for example, an IIS/Apache/Nginx vhost). If you’re using Option B on port 8080, update the task URL to `http://frankjamisoncomv2016.localhost:8080/`.
+- `*.localhost` commonly resolves to `127.0.0.1` in modern browsers/OSes. If your environment does not resolve it, change the URL in `.vscode/tasks.json` or just use `http://localhost:8080/` from Option B.
+- The task only opens the URL; it does not start a server. Use Option A or B to actually serve the site.
+
+## Troubleshooting
+
+- **Blank styling / missing images:** confirm you’re serving the repo root (so `_css/`, `_images/`, `_javascript/` resolve) and that you didn’t change folder names.
+- **VS Code task opens a site that doesn’t load:** you likely don’t have anything serving `http://frankjamisoncomv2016.localhost/` on port 80. Either stand up a vhost on port 80 or change the task URL to include your dev server port (commonly `:8080`).
+- **Animations/accordions don’t work:** check that the CDN scripts are reachable (corporate proxy/offline). If you need offline operation, vendor the libraries locally and update each HTML file.
+- **File URL quirks (`file:///...`)**: use Option B to avoid browser security restrictions around local files.
 
 ## How it’s built
 
@@ -100,6 +121,37 @@ Animsition is applied to the `.animsition` wrapper and triggers when following l
 - Navigation is duplicated in each HTML file; if you add/remove a page, update the `<nav>` block everywhere.
 - The layout is **desktop-first and fixed-width** (e.g., `body { width: 1280px; }`). If you want modern mobile support, the quickest path is adding a `meta viewport` tag and converting layout to a responsive grid/flex approach.
 - This project depends on CDNs for its JS/CSS libraries; for offline deployments, vendor those assets locally and update the `<script>`/`<link>` tags.
+
+## Making changes
+
+### Content edits
+
+- Each page is a standalone HTML file; there is no templating.
+- Navigation is duplicated across pages. If you add/remove/rename a page, update the `<nav id="mainNav">` block in every HTML file.
+
+### Styling
+
+- Global styles live in `_css/style2.css`.
+- Page banners are controlled by `#banner` + a page-specific class (e.g., `.home`, `.skills`), with background images defined in CSS.
+
+### JavaScript behavior
+
+- `_javascript/script.js` initializes jQuery UI accordions (`ul.trackAccordion`) and configures Animsition page transitions.
+- `_javascript/main.js` adds the checkbox-driven accordion animation used by `education.html`.
+
+If you remove or replace any of these patterns, also remove the associated `<script>`/`<link>` tags in each HTML file.
+
+## Deployment
+
+This site can be hosted on any static host (IIS, Apache, Nginx, S3/static hosting, etc.). Publish by copying the repository contents (at minimum the `*.html` files plus `_css/`, `_javascript/`, `_images/`, `_fonts/`).
+
+CDN dependencies:
+
+- jQuery 2.2.4
+- jQuery UI 1.11.4
+- Animsition 4.0.2
+
+If you need fully offline hosting, download/vendor those assets into the repo and update the HTML references.
 
 ## Attribution
 
